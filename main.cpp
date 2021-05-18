@@ -186,10 +186,11 @@ class Trie {
         // then we cant delete any node.
         if (!curNode->hasChildren()) {
             int index = 0;
-            curNode = nodeStack.top();
-            nodeStack.pop();
 
             while (!nodeStack.empty()) {
+                curNode = nodeStack.top();
+                nodeStack.pop();
+
                 std::cout << "deleting letter...."
                           << word[wordLength - index - 1] << std::endl;
                 curNode->removeChild(word[wordLength - index - 1]);
@@ -201,9 +202,6 @@ class Trie {
                 // and EOW==true means this node is end of word for some word
                 if (curNode->getEOW() || curNode->getNumOfChildren() > 0) {
                     break;
-                } else {
-                    curNode = nodeStack.top();
-                    nodeStack.pop();
                 }
             }
         }
@@ -252,28 +250,28 @@ class Trie {
     }
 
     void getSuggestionsHelper(TrieNode *curNode,
-                              std::vector<std::string> &suffixList,
+                              std::vector<std::string> &suggestionsList,
                               std::string subWord) {
         if (curNode->getEOW()) {
-            suffixList.push_back(subWord);
+            suggestionsList.push_back(subWord);
         }
 
         std::vector<char>::iterator it;
         std::vector<char> keys = curNode->getChildrenKeys();
 
         for (it = keys.begin(); it != keys.end(); it++) {
-            getSuggestionsHelper(curNode->getChild(*it), suffixList,
+            getSuggestionsHelper(curNode->getChild(*it), suggestionsList,
                                  subWord + (*it));
         }
     }
 
     void displayTrie() {
         std::stringstream buffer;
-        displayTrieHelper(root, "$", buffer, "", "");
+        displayTrieHelper(root, '$', buffer, "", "");
         std::cout << buffer.str() << std::endl;
     }
 
-    void displayTrieHelper(TrieNode *curNode, std::string val,
+    void displayTrieHelper(TrieNode *curNode, char val,
                            std::stringstream &buffer, std::string prefix,
                            std::string childrenPrefix) {
         buffer << prefix;
@@ -282,10 +280,10 @@ class Trie {
         std::vector<char>::iterator it;
         std::vector<char> keys = curNode->getChildrenKeys();
         for (it = keys.begin(); it != keys.end();) {
-            std::string curVal;
+            char curVal;
 
             if (*it == ' ') {
-                curVal = "_";
+                curVal = '_';
             } else {
                 curVal = *it;
             }
